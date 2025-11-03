@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login – RifqyConverter Pro</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png" type="image/png">
+  <meta name="theme-color" content="#6c5ce7">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <style>
+    :root { --primary: #6c5ce7; --bg: #0f0c29; --glass: rgba(255,255,255,0.1); --text: #fff; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63); color: var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .card { backdrop-filter: blur(16px); background: var(--glass); border:1px solid rgba(255,255,255,0.2); border-radius:28px; padding:40px; width:100%; max-width:420px; box-shadow:0 20px 40px rgba(0,0,0,0.3); text-align:center; }
+    h1 { font-size:38px; background:linear-gradient(to right,#6c5ce7,#8f94fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+    .input { width:100%; padding:18px; margin:12px 0; border:2px solid rgba(255,255,255,0.2); border-radius:18px; background:rgba(255,255,255,0.1); color:white; font-size:16px; }
+    .btn { width:100%; padding:18px; background:linear-gradient(to right,#6c5ce7,#8f94fb); color:white; border:none; border-radius:18px; font-weight:600; cursor:pointer; margin:12px 0; }
+    .pro-info { margin-top:24px; padding:16px; background:rgba(255,255,255,0.1); border-radius:16px; font-size:14px; }
+    .wa-link { color:#51cf66; text-decoration:none; font-weight:600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>RifqyConverter Pro</h1>
+    <p>Masuk untuk fitur premium</p>
+    <input type="email" class="input" id="email" placeholder="Email">
+    <input type="password" class="input" id="password" placeholder="Password">
+    <button class="btn" onclick="login()">Masuk</button>
+    <div class="pro-info">
+      <p>Fitur Pro: PPT, HTML, CSV, URL, Multi-File, Tanpa Watermark</p>
+      <p>Belum punya akun? <a href="https://wa.me/6287759652715?text=Halo,%20saya%20mau%20daftar%20RifqyConverter%20Pro!" class="wa-link" target="_blank">Daftar via WhatsApp (087759652715)</a></p>
+    </div>
+  </div>
+
+  <script src="firebase.js"></script>
+  <script>
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      if (!email || !password) return alert('Isi email & password!');
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        window.location.href = 'pro.html';
+      } catch (e) {
+        alert('Login gagal: ' + e.message);
+      }
+    }
+  </script>
+</body>
+                             </html>
