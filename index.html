@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RifqyConverter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#121212; --text:#f0f0f0; --muted:#cfcfcf; --card:#1e1e1e; --accent:#007bff; --danger:#dc3545;
+      --border:#2a2a2a;
+    }
+    html, body{
+      margin:0; padding:0; overflow-x:hidden; font-family:'Poppins',sans-serif;
+      background:var(--bg); color:var(--text);
+    }
+    .container{ padding:16px; max-width:720px; margin:0 auto; }
+    header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    header h1{ font-size:1.4rem; margin:0; }
+    .desc{ font-size:0.95rem; color:var(--muted); margin-bottom:12px; }
+    .controls{ display:flex; gap:8px; }
+    .btn{
+      padding:10px 14px; border:none; border-radius:8px; font-weight:600; cursor:pointer; color:#fff; background:var(--accent);
+    }
+    .btn.secondary{ background:#444; }
+    .grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+    @media(min-width:640px){ .grid{ grid-template-columns:1fr 1fr; } }
+
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.25); transition:transform .2s ease;
+    }
+    .card:hover{ transform:scale(1.01); }
+    .card h2{ margin:0 0 8px; font-size:1.1rem; }
+    .card p{ margin:0 0 10px; font-size:0.9rem; color:var(--muted); }
+
+    .form{ display:grid; grid-template-columns:1fr; gap:10px; }
+    .row{ display:flex; gap:10px; }
+    .row > *{ flex:1; }
+    input, select{
+      width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);
+      background:#141414; color:var(--text); box-sizing:border-box; font-size:0.95rem;
+    }
+    .result{
+      margin-top:4px; padding:10px; border-radius:10px; background:#151515; border:1px solid var(--border);
+      font-weight:600;
+    }
+    .note{ font-size:0.85rem; color:var(--muted); margin-top:6px; }
+
+    .tabs{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    .tab{ padding:8px 12px; border-radius:999px; border:1px solid var(--border); background:#161616; color:var(--text); cursor:pointer; font-weight:600; }
+    .tab.active{ background:var(--accent); border-color:var(--accent); }
+
+    .hidden{ display:none !important; }
+    .footer{ margin-top:18px; text-align:center; font-size:0.85rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔁 RifqyConverter</h1>
+      <div class="controls">
+        <button class="btn secondary" id="toggleTheme">🌗 Mode</button>
+      </div>
+    </header>
+    <p class="desc">Konversi satuan, mata uang, dan data dengan cepat dan akurat — ramah untuk HP & desktop.</p>
+
+    <div class="tabs">
+      <button class="tab active" data-target="currency">💱 Mata Uang</button>
+      <button class="tab" data-target="units">📏 Satuan</button>
+      <button class="tab" data-target="data">💾 Data</button>
+    </div>
+
+    <!-- Mata Uang -->
+    <section id="currency" class="card">
+      <h2>💱 Konversi Mata Uang</h2>
+      <p>Kalkulasi real-time menggunakan nilai tukar terbaru.</p>
+      <div class="form">
+        <div class="row">
+          <input type="number" id="curAmount" placeholder="Jumlah" min="0" step="any">
+        </div>
+        <div class="row">
+          <select id="curFrom"></select>
+          <select id="curTo"></select>
+        </div>
+        <button class="btn" id="curConvert">Konversi</button>
+        <div id="curResult" class="result">Hasil akan tampil di sini.</div>
+        <div class="note">Sumber nilai tukar: exchangerate.host (tanpa API key). Update saat konversi.</div>
+      </div>
+    </section>
+
+    <!-- Satuan -->
+    <section id="units" class="card hidden">
+      <h2>📏 Konversi Satuan</h2>
+      <p>Panjang, berat, suhu, dan volume — pilih kategori lalu konversi.</p>
+      <div class="form">
+        <div class="row">
+          <select id="unitCategory">
+            <option value="length">Panjang</option>
+            <option value="weight">Berat</option>
+            <option value="temperature">Suhu</option>
+            <option value="volume">Volume</option>
+          </select>
+          <input type="number" id="unitValue" placeholder="Nilai" step="any">
+        </div>
+        <div class="row">
+          <select id="unitFrom"></select>
+          <select id="unitTo"></select>
+        </div>
+        <button class="btn" id="unitConvert">Konversi</button>
+        <div id="unitResult" class="result">Hasil akan tampil di sini.</div>
+      </div>
+    </section>
+
+    <!-- Data -->
+    <section id="data" class="card hidden">
+      <h2>💾 Konversi Data Digital</h2>
+      <p>Gunakan basis biner (1024): Byte, KB, MB, GB, TB.</p>
+      <div class="form">
+        <div class="row">
+          <input type="number" id="dataAmount" placeholder="Jumlah" step="any">
+        </div>
+        <div class="row">
+          <select id="dataFrom">
+            <option>Byte</option><option>KB</option><option>MB</option><option>GB</option><option>TB</option>
+          </select>
+          <select id="dataTo">
+            <option>KB</option><option>MB</option><option>GB</option><option>TB</option><option>Byte</option>
+          </select>
+        </div>
+        <button class="btn" id="dataConvert">Konversi</button>
+        <div id="dataResult" class="result">Hasil akan tampil di sini.</div>
+      </div>
+      <p class="note">Catatan: 1 KB = 1024 Byte, 1 MB = 1024 KB, dst.</p>
+    </section>
+
+    <p class="footer">© RifqyDev Suite — dibuat dengan semangat belajar dan rapi.</p>
+  </div>
+
+  <script>
+    // Theme toggle (persist)
+    (() => {
+      const btn = document.getElementById('toggleTheme');
+      const saved = localStorage.getItem('rifqyTheme');
+      if (saved === 'light') {
+        document.documentElement.style.setProperty('--bg', '#f4f4f4');
+        document.documentElement.style.setProperty('--text', '#0b0b0b');
+        document.documentElement.style.setProperty('--muted', '#444');
+        document.documentElement.style.setProperty('--card', '#ffffff');
+        document.documentElement.style.setProperty('--border', '#e8e8e8');
+      }
+      btn.addEventListener('click', () => {
+        const isDark = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() === '#121212';
+        if (isDark) {
+          // switch to light
+          document.documentElement.style.setProperty('--bg', '#f4f4f4');
+          document.documentElement.style.setProperty('--text', '#0b0b0b');
+          document.documentElement.style.setProperty('--muted', '#444');
+          document.documentElement.style.setProperty('--card', '#ffffff');
+          document.documentElement.style.setProperty('--border', '#e8e8e8');
+          localStorage.setItem('rifqyTheme','light');
+        } else {
+          // switch to dark
+          document.documentElement.style.setProperty('--bg', '#121212');
+          document.documentElement.style.setProperty('--text', '#f0f0f0');
+          document.documentElement.style.setProperty('--muted', '#cfcfcf');
+          document.documentElement.style.setProperty('--card', '#1e1e1e');
+          document.documentElement.style.setProperty('--border', '#2a2a2a');
+          localStorage.setItem('rifqyTheme','dark');
+        }
+      });
+    })();
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.dataset.target;
+        document.querySelectorAll('section.card').forEach(sec=>{
+          sec.id === target ? sec.classList.remove('hidden') : sec.classList.add('hidden');
+        });
+      });
+    });
+
+    // Currency list
+    const currencyList = [
+      'IDR','USD','EUR','GBP','JPY','AUD','CAD','SGD','MYR','HKD','CNY','KRW','THB','TWD'
+    ];
+    const curFrom = document.getElementById('curFrom');
+    const curTo = document.getElementById('curTo');
+    currencyList.forEach(c=>{
+      const o1=document.createElement('option'); o1.value=c; o1.textContent=c;
+      const o2=document.createElement('option'); o2.value=c; o2.textContent=c;
+      curFrom.appendChild(o1); curTo.appendChild(o2);
+    });
+    curFrom.value='IDR'; curTo.value='USD';
+
+    // Currency convert using exchangerate.host (no key)
+    async function convertCurrency(){
+      const amount = parseFloat(document.getElementById('curAmount').value || '0');
+      const from = curFrom.value; const to = curTo.value;
+      const out = document.getElementById('curResult');
+      if (!amount || amount <= 0) { out.textContent = 'Masukkan jumlah yang valid.'; return; }
+      if (from === to){ out.textContent = `${amount.toLocaleString()} ${to}`; return; }
+      try{
+        const url = `https://api.exchangerate.host/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const rate = data.rates?.[to];
+        if (!rate){ out.textContent = 'Gagal memuat kurs. Coba lagi.'; return; }
+        const result = amount * rate;
+        out.textContent = `${amount.toLocaleString()} ${from} = ${result.toLocaleString(undefined,{maximumFractionDigits:6})} ${to}`;
+      }catch(e){
+        out.textContent = 'Tidak bisa memuat nilai tukar (offline atau diblokir).';
+      }
+    }
+    document.getElementById('curConvert').addEventListener('click', convertCurrency);
+
+    // Units
+    const unitCategory = document.getElementById('unitCategory');
+    const unitFrom = document.getElementById('unitFrom');
+    const unitTo = document.getElementById('unitTo');
+
+    const UNITS = {
+      length: { // base: meter
+        label:'Panjang', base:'m',
+        map:{ mm:0.001, cm:0.01, m:1, km:1000, inch:0.0254, ft:0.3048, yd:0.9144, mile:1609.344 }
+      },
+      weight: { // base: kilogram
+        label:'Berat', base:'kg',
+        map:{ mg:1e-6, g:1e-3, kg:1, lb:0.45359237, oz:0.028349523125 }
+      },
+      temperature: { label:'Suhu' }, // handled separately
+      volume: { // base: liter
+        label:'Volume', base:'l',
+        map:{ ml:0.001, l:1, gallon_us:3.785411784 }
+      }
+    };
+    function populateUnits(){
+      const cat = unitCategory.value;
+      unitFrom.innerHTML=''; unitTo.innerHTML='';
+      if (cat === 'temperature'){
+        ['C','F','K'].forEach(u=>{
+          const o1=document.createElement('option'); o1.value=u; o1.textContent=u;
+          const o2=document.createElement('option'); o2.value=u; o2.textContent=u;
+          unitFrom.appendChild(o1); unitTo.appendChild(o2);
+        });
+        unitFrom.value='C'; unitTo.value='F';
+      } else {
+        const keys = Object.keys(UNITS[cat].map);
+        keys.forEach(u=>{
+          const label = u==='gallon_us'?'gallon (US)':u;
+          const o1=document.createElement('option'); o1.value=u; o1.textContent=label;
+          const o2=document.createElement('option'); o2.value=u; o2.textContent=label;
+          unitFrom.appendChild(o1); unitTo.appendChild(o2);
+        });
+        unitFrom.selectedIndex=0; unitTo.selectedIndex=1;
+      }
+    }
+    unitCategory.addEventListener('change', populateUnits);
+    populateUnits();
+
+    function convertUnits(){
+      const cat = unitCategory.value;
+      const val = parseFloat(document.getElementById('unitValue').value || '0');
+      const from = unitFrom.value; const to = unitTo.value;
+      const out = document.getElementById('unitResult');
+      if (!val && val !== 0){ out.textContent='Masukkan nilai yang valid.'; return; }
+      if (from === to){ out.textContent = `${val} ${to}`; return; }
+
+      if (cat === 'temperature'){
+        // Celsius, Fahrenheit, Kelvin
+        let c;
+        if (from==='C') c = val;
+        else if (from==='F') c = (val - 32) * 5/9;
+        else if (from==='K') c = val - 273.15;
+
+        let result;
+        if (to==='C') result = c;
+        else if (to==='F') result = (c * 9/5) + 32;
+        else if (to==='K') result = c + 273.15;
+
+        out.textContent = `${val} ${from} = ${Number(result.toFixed(6))} ${to}`;
+        return;
+      }
+
+      const base = UNITS[cat].base;
+      const map = UNITS[cat].map;
+      // to base
+      const inBase = val * map[from];
+      // to target
+      const result = inBase / map[to];
+      out.textContent = `${val} ${from} = ${Number(result.toFixed(6))} ${to}`;
+    }
+    document.getElementById('unitConvert').addEventListener('click', convertUnits);
+
+    // Data (binary 1024)
+    const DATA_MAP = { Byte:1, KB:1024, MB:1024**2, GB:1024**3, TB:1024**4 };
+    function convertData(){
+      const amount = parseFloat(document.getElementById('dataAmount').value || '0');
+      const from = document.getElementById('dataFrom').value;
+      const to = document.getElementById('dataTo').value;
+      const out = document.getElementById('dataResult');
+      if (!amount && amount !== 0){ out.textContent='Masukkan jumlah yang valid.'; return; }
+      // to bytes
+      const bytes = amount * DATA_MAP[from];
+      const result = bytes / DATA_MAP[to];
+      out.textContent = `${amount} ${from} = ${Number(result.toFixed(6))} ${to}`;
+    }
+    document.getElementById('dataConvert').addEventListener('click', convertData);
+  </script>
+</body>
+</html>
