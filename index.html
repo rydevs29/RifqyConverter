@@ -51,7 +51,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>🔁 RifqyConverter</h1>
+      <h1>RifqyConverter</h1>
       <div class="controls">
         <button class="btn secondary" id="toggleTheme">🌗 Mode</button>
       </div>
@@ -67,6 +67,9 @@
     <section id="currency" class="card">
       <h2>💱 Konversi Mata Uang</h2>
       <p>Kalkulasi real-time dengan fallback otomatis bila sumber kurs gagal.</p>
+      <div class="chips">
+        <span class="chip" data-pair="USD-IDR">USD → IDR</span>
+        <span class="chip" data-pair="EUR-IDR">EUR → IDR</span>
       </div>
       <div class="form">
         <div class="row">
@@ -93,6 +96,9 @@
     <section id="units" class="card hidden">
       <h2>📏 Konversi Satuan</h2>
       <p>Panjang, berat, suhu, dan volume.</p>
+      <div class="chips">
+        <span class="chip" data-unit="cm-inch">cm → inch</span>
+        <span class="chip" data-unit="C-F">°C → °F</span>
       </div>
       <div class="form">
         <div class="row">
@@ -151,7 +157,7 @@
       <p class="note">Catatan: 1 KB = 1024 Byte, 1 MB = 1024 KB, dst.</p>
     </section>
 
-    <p class="footer">© 2025 RifqyLCC. All Right Reserved.</p>
+    <p class="footer">© RifqyDev Suite — dibuat dengan semangat belajar dan rapi.</p>
   </div>
 
   <script>
